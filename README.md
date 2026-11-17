@@ -18,6 +18,31 @@ A small Next.js 16 app (TypeScript, Tailwind, ESLint, Vitest) used as a playgrou
 
 Jobs: `lint`, `typecheck`, `test` run in parallel, then `build` runs after all three pass.
 
+## Code scanning: Semgrep Community Edition
+
+`.github/workflows/semgrep.yml` runs Semgrep CE (free, no account or token) on pushes to `main` and on PRs, and uploads SARIF to **Security → Code scanning**.
+
+- Rulesets: `p/javascript`, `p/typescript`, `p/react`, `p/secrets`
+- Tool name to use in the ruleset: **`Semgrep OSS`**
+- Semgrep CE results have no `security-severity`, only a level (error / warning / note). In the ruleset, use the **Alerts** threshold (e.g. *Errors and warnings*). The *Security alerts* threshold won't catch them.
+
+Run it locally:
+
+```bash
+pip install semgrep
+semgrep scan --config p/javascript --config p/typescript --config p/react --config p/secrets --metrics=off
+```
+
+Patterns it catches (checked locally):
+
+| Code | Rule | Level |
+| --- | --- | --- |
+| `<div dangerouslySetInnerHTML={{ __html: html }} />` | `react-dangerouslysetinnerhtml` | warning |
+| Express `res.send("<h1>" + req.query.name + "</h1>")` | `raw-html-format`, `direct-response-write` | warning |
+| Express `eval("..." + req.query.x)` | `code-string-concat` | error |
+
+Note: Semgrep CE does not trace input through Next.js `Request` objects in route handlers, so `eval(searchParams.get(...))` in `app/**/route.ts` is **not** flagged. That's a good reason to also enable CodeQL.
+
 ## Pushing to GitHub
 
 ```bash
