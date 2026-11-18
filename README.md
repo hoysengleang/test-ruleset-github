@@ -96,6 +96,30 @@ git remote add origin git@github.com:<you>/test-ruleset-github.git
 git push -u origin main
 ```
 
+## Block merges when unit or business tests fail
+
+`.github/rulesets/main-require-tests.json` is a ready-made ruleset. It makes `test` (unit) and `business-test` required status checks on `main`, so a PR can't be merged while either one is failing or still running.
+
+GitHub doesn't apply this file by itself. Import it once:
+
+1. Push the branch so CI has run at least once with both jobs.
+2. On GitHub: **Settings → Rules → Rulesets → New ruleset → Import a ruleset**, then choose `main-require-tests.json`.
+3. Check the settings, then click **Create**.
+
+What the file sets:
+
+| Setting | Value | Why |
+| --- | --- | --- |
+| Target | Default branch (`main`) | |
+| Enforcement | Active | Blocks right away. Change it to *Evaluate* when importing if you'd rather watch first. |
+| Required checks | `test`, `business-test` | Unit and business tests. Lint/typecheck/build aren't required yet. |
+| Require branches to be up to date | Off | Developers don't have to keep rebasing their PR on `main`. |
+| Bypass list | Empty | Add admins or a lead here if someone must be able to merge in an emergency. |
+
+Two things to know:
+- Required checks also apply to **direct pushes** to `main`. A push is rejected unless its commit already passed both checks on another branch, so changes effectively go through a PR.
+- The "Not in any business test" step only warns, so it doesn't block. Only failing tests block.
+
 ## Rollout plan: one step at a time
 
 Most developers don't write tests yet, so rules go on gradually. Nothing asks a developer to write a test until phase 5. Each phase starts in **Evaluate** mode (nothing is blocked; check Insights → Rule insights for what *would* fail), then moves to **Active** once the team is ready.
