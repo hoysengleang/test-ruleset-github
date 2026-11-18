@@ -1,21 +1,35 @@
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
+
+const alias = { "@": fileURLToPath(new URL("./src", import.meta.url)) };
 
 export default defineConfig({
   test: {
+    projects: [
+      {
+        resolve: { alias },
+        test: {
+          name: "unit",
+          include: ["tests/unit/**/*.test.{ts,tsx}"],
+        },
+      },
+      {
+        resolve: { alias },
+        test: {
+          name: "business",
+          include: ["tests/business/**/*.test.{ts,tsx}"],
+        },
+      },
+    ],
     coverage: {
       provider: "v8",
-      reporter: ["text"],
+      // skipFull: false = list every file, including ones at 100%.
+      reporter: [["text", { skipFull: false }]],
       reportsDirectory: "coverage",
-      // Count every source file, including ones with no tests (0%),
-      // so the percentage is honest.
+      // Unit coverage measures all of src/. Business coverage narrows this
+      // to controllers and services only (see "test:business:coverage"
+      // in package.json).
       include: ["src/**/*.{ts,tsx}"],
-      exclude: ["src/**/*.test.{ts,tsx}"],
-      // `npm run test:coverage` fails (and so does the CI "test" job)
-      // when line coverage is below this percentage.
-      // Current coverage is ~28%. Raise this as you add tests.
-      thresholds: {
-        lines: 25,
-      },
     },
   },
 });

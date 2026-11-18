@@ -9,8 +9,12 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:unit": "vitest run --project unit",
+    "test:business": "vitest run --project business",
+    "test:business:coverage": "vitest run --project business --coverage --coverage.include=\"src/**/*.{controller,service}.ts\"",
+    "test:business:check": "node scripts/check-business-coverage.mjs",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --project unit --coverage"
   },
   "dependencies": {
     "next": "16.4.6",

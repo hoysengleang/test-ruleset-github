@@ -3,11 +3,13 @@ name: Semgrep
 # Semgrep Community Edition (free, no account or token needed).
 # Results are uploaded to Security → Code scanning so the
 # "Require code scanning results" ruleset rule can use them.
+#
+# PARKED (manual run only): uploading to Code scanning on a private
+# org repo needs a paid GitHub Code Security licence, which we don't
+# have yet. To turn it back on, add these triggers again:
+#   push:         { branches: [main] }
+#   pull_request: { branches: [main] }
 on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 
 concurrency:
