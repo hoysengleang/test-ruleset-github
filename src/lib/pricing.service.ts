@@ -19,6 +19,6 @@ export function subtotal(items: OrderItem[]): number {
 
 export function orderTotal(items: OrderItem[]): number {
   const sub = subtotal(items);
-  const discount = sub > DISCOUNT_THRESHOLD ? sub * DISCOUNT_RATE : 0;
+  const discount = sub >= DISCOUNT_THRESHOLD ? sub * DISCOUNT_RATE : 0;
   return Math.round((sub - discount) * 100) / 100;
 }
