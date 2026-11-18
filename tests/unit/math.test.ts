@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { add, isEven } from "./math";
+import { add, isEven } from "@/lib/math";
 
 describe("add", () => {
   it("adds two numbers", () => {
